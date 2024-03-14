@@ -5,6 +5,8 @@ import dev.otee.zinc.model.NoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+
 @Service
 public class ZincService {
     @Autowired
@@ -13,10 +15,18 @@ public class ZincService {
         return "Server working...";
     }
 
-    public String insert(){
-        String[] tags = {"tag1", "tag2"};
-        Note note = new Note("Sample Title", "some body...", tags);
-        data.save(note);
-        return "Inserted" + note.getId();
+    public Note insert(Note note){
+        if(note.getTitle() == null || note.getTitle().isBlank()){
+            return null;
+        }
+        if(note.getBody() == null || note.getBody().isBlank()){
+            return null;
+        }
+        if(note.getTags() == null){
+            note.setTags(new String[]{});
+        }
+        note.setUpdatedAt(OffsetDateTime.now());
+        note.setCreatedAt(OffsetDateTime.now());
+        return data.save(note);
     }
 }
