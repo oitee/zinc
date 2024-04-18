@@ -1,6 +1,8 @@
-package dev.otee.zinc.controller;
+package dev.otee.zinc.api.controller;
 
 import dev.otee.zinc.ZincService;
+import dev.otee.zinc.api.schema.NoteResponse;
+import dev.otee.zinc.api.schema.ResponseBody;
 import dev.otee.zinc.model.Note;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,11 +22,13 @@ public class ZincController {
         return response;
     }
     @PostMapping("/note")
-    public ResponseEntity create(@RequestBody Note note){
+    public ResponseEntity<ResponseBody> create(@RequestBody Note note){
         Note response = service.insert(note);
         if (response == null){
-            return new ResponseEntity<String>("Title or Tag Missing", HttpStatus.BAD_REQUEST);
+            return NoteResponse.error("Title or Tag Missing", HttpStatus.BAD_REQUEST);
+
         }
-        return new ResponseEntity<Note>(response, HttpStatus.CREATED);
+        return NoteResponse.ok(note, "Note Created", response.getId(), HttpStatus.CREATED);
+
     }
 }
